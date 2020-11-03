@@ -111,8 +111,6 @@ Para establecer una comunicación entre el componente `SearchBar` y el `CardList
 
 Sería un tipo de comunicación entre "hermanos?"
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/65a30df8-8ca9-44b6-be35-c38c5edc5539/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/65a30df8-8ca9-44b6-be35-c38c5edc5539/Untitled.png)
-
 El componente `CardList` es un componente "puro" ya que recibe siempre un array de "robots" (PROPS) y SIEMPRE devuelve lo mismo.
 
 No necesita saber ni hacer nada más.
@@ -161,3 +159,51 @@ constructor() {
     console.log(filteredRobots)
   }
 ```
+
+---
+
+## Lyfecycle methods
+
+Actualmente tenemos el archivo que contiene los "robots" que se muestran en pantalla, dentro de la misma estructura de carpetas del proyecto. Vamos a llevarlo a un servidor externo (vease JSON placeholder)
+
+[JSONPlaceholder](https://jsonplaceholder.typicode.com/)
+
+Modificamos el STATE de nuestro `App` component (SMART component, ojo) para que inicialmente tenga un array vacío de datos:
+
+```jsx
+constructor() {
+    super();
+    this.state = {
+      robots: [],
+      searchfields: '',
+    };
+  }
+```
+
+Lanzaremos la petición al servidor donde se "almacenan" nuestros robots para traer esos datos una vez resuelta la misma.
+
+Vamos a utilizar los "**ciclos de vida**" de REACT para cargar los datos nada más crear ("_mounting_") la aplicación.
+
+[React.Component - React](https://es.reactjs.org/docs/react-component.html)
+
+Ten en cuenta el orden siguiente (constructor - render - componentDidMount - render):
+
+¿Por qué?
+
+Sencillo: el método `componentDidMount` se ejecuta una vez que la aplicación se ha renderizado, PERO, el método `render` se vuelve a lanzar (es del tipo Updating) cuando detecta cambios.
+
+Nos ponemos manos a la obra para hacer el "fetch" y traernos los datos que queremos renderizar:
+
+```jsx
+componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(resp => resp.json())
+      .then(users => this.setState({robots: users}))
+  }
+```
+
+---
+
+## Scroll component
+
+Vamos a crear un componente para poder hacer "scroll" en los ROBOTS sin perder el buscador superior
