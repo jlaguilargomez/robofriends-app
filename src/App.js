@@ -8,9 +8,17 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      robots: robots,
+      robots: [],
       searchfields: '',
     };
+  }
+
+
+  // En los métodos del ciclo de vida, no es necesario binderar el THIS
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(resp => resp.json())
+      .then(users => this.setState({robots: users}))
   }
 
   // Recuerda que usamos un ARROW FUNCTION para que obtenga el THIS del "sitio" en el que se ha creado, NO de donde se invoca (en este caso en SearchBox Component)
@@ -22,13 +30,18 @@ class App extends React.Component {
     const filteredRobots = this.state.robots.filter((robots) =>
       robots.name.toLowerCase().includes(this.state.searchfields.toLowerCase())
     );
-    return (
-      <div className="tc">
-        <h1 className="f1">RoboFriends</h1>
-        <SearchBox searchChange={this.onSearchChange}></SearchBox>
-        <CardList robots={filteredRobots}></CardList>
-      </div>
-    );
+    if (this.state.robots.length === 0) { 
+      return <h1>Loading ...</h1>
+    } else {
+      return (
+        <div className="tc">
+          <h1 className="f1">RoboFriends</h1>
+          <SearchBox searchChange={this.onSearchChange}></SearchBox>
+          <CardList robots={filteredRobots}></CardList>
+        </div>
+      );
+    }
+    
   }
 }
 
