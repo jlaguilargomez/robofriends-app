@@ -5,7 +5,7 @@ import './index.css';
 
 // Debemos importarlo con 'destructuring' porque en este caso son múltiples los datos que pueden venir del archivo seleccionado
 
-import App from './App';
+import App from './containers/App';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<App></App>, document.getElementById('root'));
