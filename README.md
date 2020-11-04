@@ -1,7 +1,5 @@
 # Robofriends app
 
-### Live project at: http://jlaguilardev.me/robofriends-app/
-
 **_El objetivo de este módulo es integrar REDUX en la aplicación realizada con REACT que tiene la compañía. Así mismo se nos pide optimizar y revisar la aplicación._**
 
 La incremental complejidad de las páginas webs y aplicaciones, ha hecho que el código JS crezca de una forma exponencial. Para posibilitar el mantenimiento a largo plazo así como la reducción de bugs y/o detección y eliminación de los mismos, nacen los **"frameworks"** y las **"librerías".**
@@ -111,6 +109,8 @@ Para establecer una comunicación entre el componente `SearchBar` y el `CardList
 
 Sería un tipo de comunicación entre "hermanos?"
 
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/65a30df8-8ca9-44b6-be35-c38c5edc5539/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/65a30df8-8ca9-44b6-be35-c38c5edc5539/Untitled.png)
+
 El componente `CardList` es un componente "puro" ya que recibe siempre un array de "robots" (PROPS) y SIEMPRE devuelve lo mismo.
 
 No necesita saber ni hacer nada más.
@@ -188,6 +188,8 @@ Vamos a utilizar los "**ciclos de vida**" de REACT para cargar los datos nada m�
 
 Ten en cuenta el orden siguiente (constructor - render - componentDidMount - render):
 
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c3d63136-4ee2-4ed9-8f56-72b1ae13245b/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/c3d63136-4ee2-4ed9-8f56-72b1ae13245b/Untitled.png)
+
 ¿Por qué?
 
 Sencillo: el método `componentDidMount` se ejecuta una vez que la aplicación se ha renderizado, PERO, el método `render` se vuelve a lanzar (es del tipo Updating) cuando detecta cambios.
@@ -207,3 +209,87 @@ componentDidMount() {
 ## Scroll component
 
 Vamos a crear un componente para poder hacer "scroll" en los ROBOTS sin perder el buscador superior
+
+En este caso, vamos a usar la propiedad `children`para manejar unas tags o componentes que están DENTRO de nuestro componente actual:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/be1dc483-4cf0-4ff7-9fc7-b39012ddc5a9/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/be1dc483-4cf0-4ff7-9fc7-b39012ddc5a9/Untitled.png)
+
+Para ello, dentro del componente Scroll, renderizaremos su contenido:
+
+```html
+<Scroll>
+  <CardList robots="{filteredRobots}"></CardList>
+</Scroll>
+```
+
+```jsx
+import React from 'react';
+import './Scroll.css';
+
+const Scroll = (props) => {
+  return props.children;
+};
+
+export default Scroll;
+```
+
+Le damos al componente `scroll` una funcionalidad que nos permite "recoger" cualquier otro componente y añadir un **scroll** propio. Para esto hemos utilizado en este caso la opción de añadir estilos en línea:
+
+```jsx
+const Scroll = (props) => {
+  return (
+    <div
+      style={{
+        overflowY: 'scroll',
+        border: '3px solid black',
+        height: '500px',
+      }}
+    >
+      {props.children}
+    </div>
+  );
+};
+```
+
+---
+
+## Estructura de carpetas
+
+El siguiente paso (que debería haber sido el primero...) es crear una estructura de carpetas adecuada para ayudar a cualquier persona que se adentre en el proyecto a saber dónde narices están las cosas.
+
+Dentro de `src` vamos a diferenciar dos subcarpetas principales:
+
+- `components` - la utilizaremos para guardar componentes de renderizado o aquellos simples que sólo tienen PROPS (quizá lo podría explicar mejor)
+- `containers` - contiene los componentes SMART, aquellos que tienen un STATE interno y que se crean mediante `class Component extends React.Component{}`. Contienen "cosas" y pasan sus cambios a otros COMPONENTS
+
+Tras aplicar los cambios básicos, la nueva estructura de carpetas queda de la siguiente forma:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2c652645-a0f9-43a5-bd3e-c397c485b37b/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2c652645-a0f9-43a5-bd3e-c397c485b37b/Untitled.png)
+
+Bueno, no está mal.
+
+También aprovechamos para **refactorizar** el código en el componente `App.js`
+
+```jsx
+render() {
+    const { robots, searchfield } = this.state;
+    const filteredRobots = robots.filter((robots) =>
+      robots.name.toLowerCase().includes(searchfield.toLowerCase())
+    );
+    return (!robots.length) ?
+       <h1>Loading ...</h1>
+    :
+       (
+        <div className="tc">
+          <h1 className="f1">RoboFriends</h1>
+          <SearchBox searchChange={this.onSearchChange}></SearchBox>
+          <Scroll>
+            <CardList robots={filteredRobots}></CardList>
+          </Scroll>
+        </div>
+      );
+  }
+```
+
+- Usamos "**destructuring**" para no tener que estar llamando continuamente a `this.state`
+- Cambiamos el **IF-ELSE** a una "ternary expression" (sólo si es más comprensible)
