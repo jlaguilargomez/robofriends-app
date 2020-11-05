@@ -1,5 +1,7 @@
 # Robofriends app
 
+Deploy: http://jlaguilardev.me/robofriends-app/
+
 **_El objetivo de este módulo es integrar REDUX en la aplicación realizada con REACT que tiene la compañía. Así mismo se nos pide optimizar y revisar la aplicación._**
 
 La incremental complejidad de las páginas webs y aplicaciones, ha hecho que el código JS crezca de una forma exponencial. Para posibilitar el mantenimiento a largo plazo así como la reducción de bugs y/o detección y eliminación de los mismos, nacen los **"frameworks"** y las **"librerías".**
