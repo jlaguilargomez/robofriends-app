@@ -293,3 +293,113 @@ render() {
 
 - Usamos "**destructuring**" para no tener que estar llamando continuamente a `this.state`
 - Cambiamos el **IF-ELSE** a una "ternary expression" (sólo si es más comprensible)
+
+## Keep the project Update
+
+Es probable que a la hora de utilizar algún proyecto de nuestro repositorio nos encontremos con que las dependencias del **package.json** estén desactualizadas.
+
+Incluso, en muchas ocasiones, nos encontramos con que al hacer el `npm install` nos dice que se encontraron X vulnerabilidades:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3520e917-2cb5-4ba5-9c03-bdaa32cdba5c/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/3520e917-2cb5-4ba5-9c03-bdaa32cdba5c/Untitled.png)
+
+Si ocurre esto podemos lanzar el comando `npm audit fix` para solucionar aquellas vulnerabilidades que tengan una actualización "simple".
+
+Se dan casos en los que nos dice que hay que hacerlo de forma manual (podemos usar el comando `npm audit` para entrar en el detalle sin actualizar.
+
+Si queremos hacerlo "a lo bestia", todavía podemos usar `npm audit fix --force`. Pero si hacemos esto, hay que tener muy en cuenta el revisar la aplicación al detalle.
+
+**Ojo con actualizar al "tun tun" que podemos generar un cambio en algunas librerías que haga que la aplicación deje de funcionar**
+
+Para prevenir posibles errores a la hora de actualizar, las dependencias incorporan una especie de "control de versiones" que determinan hasta dónde se pueden actualizar estas. Un ejemplo:
+
+```jsx
+"react": "^16.**10**.2"
+```
+
+Indica que sólo se puede realizar una actualización "**minor**", es decir, que podría cambiarse el segundo término de la misma.
+
+Una vez terminada las actualizaciones de seguridad (comprobar en la pestaña de seguridad del proyecto), volvemos a hacer PR.
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/422c7da9-fc81-4ec7-a7d0-f5b0982007ec/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/422c7da9-fc81-4ec7-a7d0-f5b0982007ec/Untitled.png)
+
+Como ejemplo práctico, ya que hemos empezado el proyecto con la versión 16 de React, vamos a hacer la actualización a la versión 17 que ya es estable:
+
+```powershell
+npm install react@17.0.0 react-dom@17.0.0
+```
+
+**Recuerda que DEBES revisar el proyecto después de una actualización importante.**
+
+Según la documentación de la v17 de React, no se incluyen cambios que puedan hacer dejar de funcionar la aplicación.
+
+## Error Boundary in React
+
+Vamos a ver cómo podemos realizar el **"manejo de errores"** en React, para que si, por lo que sea, uno de nuestros componentes deja de funcionar de la forma que se espera, no se produzca un fallo en toda la aplicación.
+
+Creamos un componente `ErrorBoundry` que encapsule los componentes que queremos "controlar" y se encargue de manejar sus errores:
+
+- Si todo va bien, mostrar el componente
+- Si algo falla, capturar el error gracias al componente de ciclo de vida `componentDidCatch(error, info) {}` y cambiar el estado interno del `ErrorBoundry` para que muestre el error
+
+```jsx
+import React from 'react';
+
+class ErrorBoundry extends React.Component {
+  constructor(props) {
+    super();
+    this.state = {
+      hasError: false,
+    }
+  }
+
+	// si ocurre un error, lo captura. Es como el "catch()"
+  **componentDidCatch(error, info) {
+		console.log(error, info);
+    this.setState({
+      hasError: true
+    })
+  }**
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Oops. That is not good</h1>
+    }
+    return this.props.children;
+  }
+
+}
+
+export default ErrorBoundry;
+```
+
+Si "wrapeamos" el `CardList` component y generamos un error internamente en él:
+
+```jsx
+const CardList = ({ robots }) => {
+  const cardComponent = robots.map((robot) => {
+
+    **if (true) {
+      throw new Error('NOOOOO!')
+    }**
+
+    return <Card
+      key={robot.id}
+      id={robot.id}
+      name={robot.name}
+      email={robot.email}
+    />
+  })
+
+  return <div>
+    {cardComponent}
+  </div>;
+}
+```
+
+El componente que hemos creado para manejar estos errores se activará y lanzará el mensaje que hemos configurado.
+
+Pero ten en cuenta que en desarrollo, el manejo de errores lo hace React y nos mostrará la siguiente pantalla:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png)
+
+**¡¡ Por lo tanto, esto que hemos hecho es útil para producción!!**
