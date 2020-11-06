@@ -224,17 +224,6 @@ Para ello, dentro del componente Scroll, renderizaremos su contenido:
 </Scroll>
 ```
 
-```jsx
-import React from 'react';
-import './Scroll.css';
-
-const Scroll = (props) => {
-  return props.children;
-};
-
-export default Scroll;
-```
-
 Le damos al componente `scroll` una funcionalidad que nos permite "recoger" cualquier otro componente y añadir un **scroll** propio. Para esto hemos utilizado en este caso la opción de añadir estilos en línea:
 
 ```jsx
@@ -324,7 +313,7 @@ Una vez terminada las actualizaciones de seguridad (comprobar en la pestaña de 
 
 ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/422c7da9-fc81-4ec7-a7d0-f5b0982007ec/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/422c7da9-fc81-4ec7-a7d0-f5b0982007ec/Untitled.png)
 
-Como ejemplo práctico, ya que hemos empezado el proyecto con la versión 16 de React, vamos a hacer la actualización a la versión 17 que ya es estable:
+Como ejemplo práctico, ya que hemos empezado el proyecto con la versión 16 de React, **vamos a hacer la actualización a la versión 17** que ya es estable:
 
 ```powershell
 npm install react@17.0.0 react-dom@17.0.0
@@ -404,4 +393,143 @@ Pero ten en cuenta que en desarrollo, el manejo de errores lo hace React y nos m
 
 ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png)
 
-**¡¡ Por lo tanto, esto que hemos hecho es útil para producción!!**
+**¡¡ Por lo tanto, esto que hemos hecho es útil para producción !!**
+
+## Deployment
+
+Ya la tengo desplegada, para hacerlo seguimos los pasos que nos indica la propia página de React:
+
+[Deployment | Create React App](https://create-react-app.dev/docs/deployment/#step-1-add-homepage-to-packagejson)
+
+Atento porque también se indica como desplegar en otros sitios como **FIREBASE, HEROKU ....**
+
+---
+
+## React Hooks !
+
+_La idea de esta sección es hacer el cambio para usar "hooks" en los "class component" de la app robofriends_
+
+[Presentando Hooks - React](https://es.reactjs.org/docs/hooks-intro.html)
+
+Los **Hooks** son una nueva característica de React que permite usar el **estado** y otras características de React sin necesidad de usar Clases. Ejemplo:
+
+```jsx
+import React, { useState } from 'react';
+
+function Example() {
+  // Declara una nueva variable de estado, la cual llamaremos “count”
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>You clicked {count} times</p>
+      <button onClick={() => setCount(count + 1)}>Click me</button>
+    </div>
+  );
+}
+```
+
+**Importante cuando hay una novedad en una librería: leer la documentación. Sobretodo la parte de "motivation" (el por qué de su inclusión)**
+
+Vamos a entender los que llevaron a crear los **React Hooks**:
+
+- _Es difícil reutilizar la lógica de estado entre componentes_
+- _Los componentes complejos se vuelven difíciles de entender_
+- _Las clases confunden tanto a las personas como a las máquinas (?)_
+
+Hasta la fecha, sólo usabamos "functional components" cuando creabamos componentes SIN estado, ahora la cosa va a cambiar.
+
+```jsx
+class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      robots: [],
+      searchfield: '',
+    };
+  }
+}
+```
+
+El esquema para convertir lo anterior en Hooks es la siguiente:
+
+```jsx
+const [robots, setRobots] = useState([]);
+const [searchfield, setSearchfield] = useState('');
+```
+
+1. Usaremos "destructuring" para asignar las dos variables (un valor y una función)
+2. Como valor, recibirá el nombre del estado con el que trabajamos
+3. Como función, le asignaremos como norma `setLoquesea`
+4. Igualamos al método de React `useState` (previamente importado), al que le pasamos como parámetro el estado inicial.
+
+Ojo que ahora tampoco tenemos los tradicionales métodos del ciclo de vida de los componentes (estaban disponibles al heredar la clase `React.Component`) por lo que lo eliminamos y usaremos, en el caso de nuestra aplicación, el `Effect Hook`:
+
+```jsx
+componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(resp => resp.json())
+      .then(users => this.setState({robots: users}))
+  }
+```
+
+> _Si estás familiarizado con el ciclo de vida de las clases de React y sus métodos, el Hook useEffect equivale a componentDidMount, componentDidUpdate y componentWillUnmount combinados._
+
+El cambo sería el siguiente:
+
+```jsx
+useEffect(
+  () => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then((resp) => resp.json())
+      .then((users) => setRobots(users));
+  },
+  [
+    /*definimos aquí qué valores determinan cuándo debe lanzarse el useEffect */
+  ]
+);
+```
+
+**Presta atención al parámetro adicional que puede recibir "useEffect" para no tener ciclos infinitos: _"If present, affect will only activate if the values in the list change"_**
+
+Sí, porque si añadimos un `console.log` a nuestra función `App`, veremos que se está ejecutando continuamente:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1655e2fb-4f6b-43b5-8443-5be0f0a4d02e/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1655e2fb-4f6b-43b5-8443-5be0f0a4d02e/Untitled.png)
+
+Si le pasamos, por ejemplo:
+
+```jsx
+useEffect(() => {
+  fetch('https://jsonplaceholder.typicode.com/users')
+    .then((resp) => resp.json())
+    .then((users) => setRobots(users));
+}, [searchfield]);
+```
+
+Sólo se ejecutará al cambiar `searchfield`, no está mal, pero no es del todo óptimo.
+
+Para tener un comportamiento igual al que teníamos antes con `componentDidMount()` tenemos un pequeño "truqui" que es pasarle un ARRAY vacío:
+
+```jsx
+useEffect(() => {
+  fetch('https://jsonplaceholder.typicode.com/users')
+    .then((resp) => resp.json())
+    .then((users) => setRobots(users));
+}, []);
+```
+
+Le decimos que cambie cuando ... ¡no tiene condición!, así que no cambia 🤨. Sólo carga los datos 1 vez.
+
+¿¿ Tengo que cambiar ahora todo el código ??
+
+NO. Los **_hooks_** pueden convivir con normalidad con los **_class components._**
+
+De hecho en la misma página de React se desaconseja estar cambiando todo el proyecto existente, pero se recomienda empezar a usarlo en adelante.
+
+Ten en cuenta estas dos recomendaciones:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1b3cd313-a8f6-4427-8559-3e945ebd931d/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1b3cd313-a8f6-4427-8559-3e945ebd931d/Untitled.png)
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2102a46d-6758-4ee8-8922-f6e0a21aaece/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2102a46d-6758-4ee8-8922-f6e0a21aaece/Untitled.png)
+
+**Otra de las ideas es que podemos crear nuestros propios Hooks para ser compartidos y reutilizados posteriormente**
