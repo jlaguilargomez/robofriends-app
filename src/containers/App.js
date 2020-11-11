@@ -7,46 +7,52 @@ import Scroll from '../components/scroll/Scroll'
 
 import './App.css'
 import ErrorBoundry from '../core/error/ErrorBoundry';
-import { setSearchField } from '../redux/actions';
+import { requestRobots, setSearchField,  } from '../redux/actions';
 
 
 const mapStateToProps = state => { 
   return {
-    searchField: state.searchField,
+    searchField: state.searchRobots.searchField,
+    robots: state.requestRobots.robots,
+    isPending: state.requestRobots.isPending,
+    err: state.requestRobots.err
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSearchChange: (event) =>{dispatch(setSearchField(event.target.value))}
+    onSearchChange: (event) => { dispatch(setSearchField(event.target.value)) },
+    
+    // ** Vamos a sustituir el useEffect():
+    onRequestRobots: () => dispatch(requestRobots())
 
   }
 }
 
 function App (props) {
-  const [robots, setRobots] = useState([]);
-  
+  // const [robots, setRobots] = useState([]);
   // const [searchfield, setSearchfield] = useState('');
 
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(resp => resp.json())
-      .then(users => setRobots( users))
-  },[]) // only run if [something] changes
+  useEffect(()=>props.onRequestRobots(),[])
+
+  // useEffect(() => {
+  //   fetch('https://jsonplaceholder.typicode.com/users')
+  //     .then(resp => resp.json())
+  //     .then(users => setRobots( users))
+  // },[]) // only run if [something] changes
 
   // Recuerda que usamos un ARROW FUNCTION para que obtenga el THIS del "sitio" en el que se ha creado, NO de donde se invoca (en este caso en SearchBox Component)
   // const onSearchChange = (event) => {
   //   setSearchfield( event.target.value)
   // }
     
-  const filteredRobots = robots.filter((robots) =>
+  const filteredRobots = props.robots.filter((robots) =>
     robots.name.toLowerCase().includes(props.searchField.toLowerCase())
   );
   
-  return (!robots.length) ? 
+  return props.isPending ? (
     <h1>Loading ...</h1>
-  :
-    (
+  ) : (
     <div className="tc">
       <h1 className="f1">RoboFriends</h1>
       <SearchBox searchChange={props.onSearchChange}></SearchBox>
@@ -56,7 +62,7 @@ function App (props) {
         </ErrorBoundry>
       </Scroll>
     </div>
-    );
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
