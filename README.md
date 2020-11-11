@@ -285,6 +285,8 @@ render() {
 - Usamos "**destructuring**" para no tener que estar llamando continuamente a `this.state`
 - Cambiamos el **IF-ELSE** a una "ternary expression" (sólo si es más comprensible)
 
+---
+
 ## Keep the project Update
 
 Es probable que a la hora de utilizar algún proyecto de nuestro repositorio nos encontremos con que las dependencias del **package.json** estén desactualizadas.
@@ -322,6 +324,8 @@ npm install react@17.0.0 react-dom@17.0.0
 **Recuerda que DEBES revisar el proyecto después de una actualización importante.**
 
 Según la documentación de la v17 de React, no se incluyen cambios que puedan hacer dejar de funcionar la aplicación.
+
+---
 
 ## Error Boundary in React
 
@@ -394,6 +398,8 @@ Pero ten en cuenta que en desarrollo, el manejo de errores lo hace React y nos m
 ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ddf5e332-282c-4916-a347-614230abf8ec/Untitled.png)
 
 **¡¡ Por lo tanto, esto que hemos hecho es útil para producción !!**
+
+---
 
 ## Deployment
 
@@ -533,3 +539,353 @@ Ten en cuenta estas dos recomendaciones:
 ![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2102a46d-6758-4ee8-8922-f6e0a21aaece/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2102a46d-6758-4ee8-8922-f6e0a21aaece/Untitled.png)
 
 **Otra de las ideas es que podemos crear nuestros propios Hooks para ser compartidos y reutilizados posteriormente**
+
+---
+
+## Redux and Webpack
+
+[Read Me](https://es.redux.js.org/)
+
+En el siguiente apartado, queremos mejorar el "flujo" de la aplicación:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ce2fc805-86cf-4b3d-aa1c-fad3572be165/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/ce2fc805-86cf-4b3d-aa1c-fad3572be165/Untitled.png)
+
+Cada uno de los componentes de nuestra aplicación puede tener un STATE propio, que determina la configuración del mismo y podríamos decir que es como la "memoria" la app:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6cd8cb1e-154e-4a63-b69f-a271c53f6222/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/6cd8cb1e-154e-4a63-b69f-a271c53f6222/Untitled.png)
+
+Vale, pero ¿qué pasa cuando nuestra APP empieza a tener una cantidad muy considerable de componentes y estados diferentes?. Que gestionar estados "locales" empieza a ser algo bastante más complejo...
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/761f1956-3a85-467c-8ebc-3bf8a0f08d45/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/761f1956-3a85-467c-8ebc-3bf8a0f08d45/Untitled.png)
+
+Imagina que los rojos son los que tienen STATE y los azules cambian el estado de otros
+
+Y si pensáramos en un **OBJETO masivo que contuviera todo el STATE de la aplicación** y que cada uno de los componentes tuviera sólo (o no) PROPS ?
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dd1c89f6-5e51-4252-b1b5-b4750298a36a/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/dd1c89f6-5e51-4252-b1b5-b4750298a36a/Untitled.png)
+
+**REDUX** está para ayudarnos, toma ideas y conceptos de una estructura de BBDD
+
+### ¿Por qué REDUX?
+
+- Se lleva muy bien con React
+- Es bueno para manejar "grandes estados"
+- Muy útil para intercambiar datos entre contenedores (componentes)
+- **PREDICTABLE STATE MANAGEMENT USING THE 3 PRICIPLES**:
+  - **SINGLE SOURCE OF TRUTH**: 1 sólo objeto que contiene todo el estado de la aplicación
+  - **STATE IS READ ONLY**: inmutabilidad, el objeto original no se modifica, se crea uno nuevo en cada cambio realizado (?)
+  - **CHANGES USING PURE FUNCTIONS**: como debería ser siempre!
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0871b263-570b-4537-a9f9-82cc8b36e431/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/0871b263-570b-4537-a9f9-82cc8b36e431/Untitled.png)
+
+REDUCER es un "filtro" que mediante funciones puras se encarga de manejar el STORE
+
+Ten en cuenta el patrón que se utiliza en Redux:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f60bc695-3da2-457a-b813-180c3aa6bab5/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/f60bc695-3da2-457a-b813-180c3aa6bab5/Untitled.png)
+
+Lo mismo te suena de NgRx en Angular, verdad?
+
+Quedate con un concepto que simplifica las cosas:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1e8a8048-b762-48ee-9145-41a29ce2fca6/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1e8a8048-b762-48ee-9145-41a29ce2fca6/Untitled.png)
+
+**En teoría, según esto, con REDUX no es necesario tener estados locales en los componentes de REACT.**
+
+Pero ojo, no es excluyente, podemos encontrar casos en los que se combinan ambos.
+
+### Configure Redux
+
+```powershell
+npm install redux
+```
+
+**La configuración de REDUX se realiza en JS, y lo mejor de esto es que la librería maneja conceptos y muy buenas prácticas que mejorará nuestro conocimiento base en JS**
+
+Para conectar React con Redux, utilizamos la librería:
+
+```powershell
+npm install react-redux
+```
+
+**Salvo el componente SMART, el resto no tiene por qué tener constancia de la existencia de REACT. En nuestro proyecto (robofriends) se realizará la conexión con `App.js`**
+
+Existe una "cosita" llamada **Redux Toolkit**:
+
+[Redux Toolkit | Redux Toolkit](https://redux-toolkit.js.org/)
+
+que se encarga de gestionar toda la configuración de REDUX en nuestra aplicación (ya que según se comenta es un poco compleja). Tenlo en cuenta, pero no lo vamos a usar en el curso ya que es mejor "mancharse las manos" haciéndolo todo de 0.
+
+### Redux: actions and reducers
+
+Según el esquema que vimos arriba, vamos a crear nuestras `actions`, `reducers` y `constants`
+
+`actions.js`
+
+```jsx
+import { CHANGE_SEARCHFIELD } from './constants';
+
+export const setSearchField = (text) => ({
+  type: CHANGE_SEARCHFIELD,
+  payload: text,
+});
+```
+
+`reducers.js`
+
+```jsx
+import { CHANGE_SEARCHFIELD } from './constants';
+
+const initialState = {
+  searchField: '',
+};
+
+export const searchRobots = (state = initialState, action = {}) => {
+  switch (action.type) {
+    case CHANGE_SEARCHFIELD:
+      return Object.assign({}, state, { searchField: action.payload });
+    default:
+      return state;
+  }
+};
+```
+
+`constants.js`
+
+```jsx
+export const CHANGE_SEARCHFIELD = 'CHANGE_SEARCHFIELD';
+```
+
+Una vez los hemos creado, vamos a conectarlos a nuestra aplicación React
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/496fa852-a869-4146-98be-92b9bc8637b7/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/496fa852-a869-4146-98be-92b9bc8637b7/Untitled.png)
+
+Ahora podríamos, en teoría, pasarle el STORE como prop a `App.js`
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/80c077e5-cfa8-4fc4-b23d-924640e5b61e/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/80c077e5-cfa8-4fc4-b23d-924640e5b61e/Untitled.png)
+
+¿Y voy a tener que estar pasando el STATE como PROP en cada componente?
+
+NO. Para eso tenemos el conector `<Provider></Provider>` y los conectores que veremos a continuación:
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2653c1e6-70b2-4ac9-9905-46d6190d6703/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2653c1e6-70b2-4ac9-9905-46d6190d6703/Untitled.png)
+
+**Las buenas prácticas dicen que a los componentes SMART los llamemos `containers`y los agrupemos juntos, separados de los `components` (no Smart)**
+
+Revisar la clase 105, en la que se explica al detalle un ejemplo de la integración de la aplicación "robofriends" con Redux. No estaría de más darle un par de vueltas antes de seguir, con el siguiente video:
+
+[https://www.youtube.com/watch?v=ngc9gnGgUdA&feature=youtu.be&ab_channel=JavaScriptMastery](https://www.youtube.com/watch?v=ngc9gnGgUdA&feature=youtu.be&ab_channel=JavaScriptMastery)
+
+Una vez terminada la integración del componente `App.js` con Redux, queda de la siguiente forma:
+
+```jsx
+import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
+
+import CardList from '../components/card-list/CardList';
+import SearchBox from '../components/search-box/SearchBox';
+import Scroll from '../components/scroll/Scroll'
+
+import './App.css'
+import ErrorBoundry from '../core/error/ErrorBoundry';
+import { setSearchField } from '../redux/actions';
+
+**const mapStateToProps = state => {
+  return {
+    searchField: state.searchField,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSearchChange: (event) =>{dispatch(setSearchField(event.target.value))}
+
+  }
+}**
+
+function App (props) {
+  const [robots, setRobots] = useState([]);
+
+  // const [searchfield, setSearchfield] = useState('');
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(resp => resp.json())
+      .then(users => setRobots( users))
+  },[]) // only run if [something] changes
+
+  // Recuerda que usamos un ARROW FUNCTION para que obtenga el THIS del "sitio" en el que se ha creado, NO de donde se invoca (en este caso en SearchBox Component)
+  // const onSearchChange = (event) => {
+  //   setSearchfield( event.target.value)
+  // }
+
+  const filteredRobots = robots.filter((robots) =>
+    robots.name.toLowerCase().includes(props.searchField.toLowerCase())
+  );
+
+  return (!robots.length) ?
+    <h1>Loading ...</h1>
+  :
+    (
+    <div className="tc">
+      <h1 className="f1">RoboFriends</h1>
+      <SearchBox searchChange={props.onSearchChange}></SearchBox>
+      <Scroll>
+        <ErrorBoundry>
+          <CardList robots={filteredRobots}></CardList>
+        </ErrorBoundry>
+      </Scroll>
+    </div>
+    );
+}
+
+**export default connect(mapStateToProps, mapDispatchToProps)(App);**
+```
+
+**Presta atención a las funciones `mapStateToProps` y `mapDispatchToProps` y a la forma de "exportar" el componente (`connect(...)(App)`)**
+
+Para entenderlo mejor, podemos mostrar por consola lo que se "cuece" en nuestra única `Action`:
+
+```jsx
+import { CHANGE_SEARCH_FIELD } from './constants';
+
+export const setSearchField = (text) => {
+  console.log('searchfield: ', text);
+  return { type: CHANGE_SEARCH_FIELD, payload: text };
+};
+```
+
+---
+
+## Redux Middleware
+
+Podemos introducir "middlewares" en la aplicación (entre las `actions` y `reducers`) para controlar, mapear y gestionar la ejecución de estos.
+
+¿Para qué?
+
+Un ejemplo... Empezamos instalando `npm install redux-logger`
+
+Es una "librería" que nos permite **monitorizar estados y acciones de la App a tiempo real** (se ejecuta entre la acción y el reducer):
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8268db87-083a-4aea-8976-5dee7b9415a9/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/8268db87-083a-4aea-8976-5dee7b9415a9/Untitled.png)
+
+---
+
+## Redux Async Actions
+
+Vamos a cambiar ahora la petición asíncrona que hacemos para obtener los robots al iniciar el componente `App.js`, para hacerla con la librería **REDUX**
+
+Instalamos:
+
+```jsx
+npm install redux-thunk
+```
+
+(Es otro **Middleware)**
+
+Comenzamos creando tres nuevas acciones (**es un estandar a la hora de trabajar con peticiones asíncronas**):
+
+```jsx
+export const REQUEST_ROBOTS_**PENDING** = 'REQUEST_ROBOTS_PENDING';
+export const REQUEST_ROBOTS_**SUCCESS** = 'REQUEST_ROBOTS_SUCCESS';
+export const REQUEST_ROBOTS_**FAIL** = 'REQUEST_ROBOTS_FAIL';
+```
+
+```jsx
+export const requestRobots = (dispatch) => {
+  dispatch({ type: REQUEST_ROBOTS_PENDING });
+  fetch('https://jsonplaceholder.typicode.com/users')
+    .then((resp) => resp.json())
+    .then((data) => dispatch({ type: REQUEST_ROBOTS_SUCCESS, payload: data }))
+    .catch((err) => dispatch({ type: REQUEST_ROBOTS_FAIL, payload: err }));
+};
+```
+
+Una vez tenemos las **acciones,** creamos los `reducers`:
+
+```jsx
+const initialStateRobots = {
+  isPending: false,
+  robots: [],
+  err: '',
+};
+
+export const requestRobots = (state = initialStateRobots, action = {}) => {
+  switch (action.type) {
+    case REQUEST_ROBOTS_PENDING:
+      return Object.assign({}, state, { isPending: true });
+    case REQUEST_ROBOTS_SUCCESS:
+      return Object.assign({}, action, {
+        robots: action.payload,
+        isPending: false,
+      });
+    case REQUEST_ROBOTS_FAIL:
+      return Object.assign({}, state, {
+        err: action.payload,
+        isPending: false,
+      });
+    default:
+      return state;
+  }
+};
+```
+
+Y ojo, porque ahora tenemos que hacer "consciente" al `index.js` de que tenemos varios **REDUCERS**.
+
+Utilizamos el método que viene con la librería de REACT: `combineReducers`
+
+```jsx
+const rootReducer = combineReducers({ searchRobots, requestRobots });
+
+const store = createStore(
+  rootReducer,
+  applyMiddleware(thunkMiddleware, logger)
+);
+```
+
+Ojo porque ahora nuestra **STORE** contiene 2 estados, y cada vez que la llamemos, debemos indicarle en concreto cuál queremos utilizar. Veamos....
+
+**El nuevo "middleware" que estamos utilizando...**
+
+```jsx
+import thunkMiddleware from 'redux-thunk';
+```
+
+**se ejecutará cada vez que uno de nuestros REDUCERS devuelva una función, no un objeto.**
+
+❗ Recuerda que para que no se produzca un bucle infinito de peticiones, en el método `useEffect` hay que pasarle como segundo parámetro un ARRAY vacío
+
+```jsx
+useEffect(() => props.onRequestRobots(), []);
+```
+
+Insisto una vez más, no está de más leer la documentación antes de empezar a usarlo:
+
+[Read Me](https://es.redux.js.org/)
+
+¡¡ No es que no esté de más, es que es imperativo !!
+
+---
+
+## Module bundlers
+
+Cuando el proyecto ya va teniendo cierta jerarquía, la cantidad de archivos JS que tenemos para los distintos componentes empieza a ser considerable, por lo que se hace muy necesario algún sistema para "empaquetar" y servir de manera más optimizada estos archivos.
+
+El objetivo es "maximizar" la entrega efectiva de estos archivos.
+
+Tenemos varias herramientas a día de hoy para hacer esto, aunque como sabemos, la más utilizada es **WEBPACK:**
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/72ee3ded-0ed1-4f9e-87b2-d3e35c490f24/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/72ee3ded-0ed1-4f9e-87b2-d3e35c490f24/Untitled.png)
+
+¿Voy a usar el resto? Puede que sí, en las siguientes casuísticas:
+
+- Si el proyecto es grande, **WEBPACK**, sin duda
+- Si es para un pequeño proyecto personal, **PARCEL**
+
+¡Vamos con Webpack!
+
+![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7899744e-368e-4be3-961e-c733bd99643a/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/7899744e-368e-4be3-961e-c733bd99643a/Untitled.png)
+
+[https://webpack.js.org/](https://webpack.js.org/)
+
+**LOADERS: herramientas que compilan o transpilan nuestro código, usadas por librerías como Webpack**
