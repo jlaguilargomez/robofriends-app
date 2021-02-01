@@ -8,6 +8,7 @@ import Scroll from '../components/scroll/Scroll'
 import './App.css'
 import ErrorBoundry from '../core/error/ErrorBoundry';
 import { requestRobots, setSearchField,  } from '../redux/actions';
+import Header from '../components/header/Header';
 
 
 const mapStateToProps = state => { 
@@ -54,7 +55,7 @@ function App (props) {
     <h1>Loading ...</h1>
   ) : (
     <div className="tc">
-      <h1 className="f1">RoboFriends</h1>
+      <Header></Header>
       <SearchBox searchChange={props.onSearchChange}></SearchBox>
       <Scroll>
         <ErrorBoundry>
