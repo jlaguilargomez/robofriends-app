@@ -9,6 +9,7 @@ import './App.css'
 import ErrorBoundry from '../core/error/ErrorBoundry';
 import { requestRobots, setSearchField,  } from '../redux/actions';
 import Header from '../components/header/Header';
+import CounterButton from '../components/counter-button/CounterButton';
 
 
 const mapStateToProps = state => { 
@@ -55,7 +56,8 @@ function App (props) {
     <h1>Loading ...</h1>
   ) : (
     <div className="tc">
-      <Header></Header>
+        <Header></Header>
+        <CounterButton color={'blue'}></CounterButton>
       <SearchBox searchChange={props.onSearchChange}></SearchBox>
       <Scroll>
         <ErrorBoundry>
