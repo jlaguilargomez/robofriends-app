@@ -1,6 +1,6 @@
 # Robofriends app
 
-Deploy: http://jlaguilardev.me/robofriends-app/
+Deploy: https://jlaguilargomez.github.io/robofriends-app/
 
 **_El objetivo de este módulo es integrar REDUX en la aplicación realizada con REACT que tiene la compañía. Así mismo se nos pide optimizar y revisar la aplicación._**
 
